@@ -65,3 +65,30 @@ def test_guest_cant_see_product_in_basket_opened_from_product_page(browser):
     page.guest_can_go_to_basket_page()
     page.guest_cant_see_product_in_basket()
     page.guest_can_see_empty_basket()
+
+class TestUserAddToBasketFromProductPage():
+    @pytest.fixture(scope="function", autouse=True)
+    def setup(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/en-gb/accounts/login/"
+        email = str(time.time()) + "@fakemail.org"
+        password = str(time.time())
+        self.page = LoginPage(browser, link)
+        self.page.open()
+        self.page.register_new_user(email, password, browser)
+        self.page.should_be_authorized_user()
+
+    def test_user_cant_see_success_message(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/ru/catalogue/coders-at-work_207/"
+        page = ProductPage(browser, link)
+        page.open()
+        page.check_success_message_on_product_page()
+
+
+    def test_user_can_add_product_to_basket(self, browser):
+        link = "http://selenium1py.pythonanywhere.com/catalogue/coders-at-work_207/"
+        page = ProductPage(browser, link)
+        page.open()
+        page.guest_can_add_product_to_basket()
+        page.guest_can_see_product_name()
+        time.sleep(2)
+        page.product_price_is_correct()
